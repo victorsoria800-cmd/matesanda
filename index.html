@@ -32,7 +32,12 @@
     <h1>Prof. MateSanda • Entrenamiento de Matemática (Escuela 3117)</h1>
   </div>
 </header>
-
+header .brand { display: flex; align-items: center; gap: 12px; }
+header .logo { height: 44px; width: auto; border-radius: 6px; background: #fff0; }
+@media (max-width: 480px) {
+  header h1 { font-size: 18px; }
+  header .logo { height: 36px; }
+}
 <main>
   <div class="card" id="bienvenida">
     <h2>¡Hola! Soy el Prof. MateSanda 👋</h2>
