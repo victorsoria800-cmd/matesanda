@@ -36,8 +36,7 @@
     <p>Te doy la bienvenida al entrenamiento interactivo. Elige un tema para empezar. En cualquier momento puedes volver al menú.</p>
     <div class="chips" id="menu"></div>
     <div class="chips" style="margin-top:10px">
-      <a class="btn ghost" target="_blank" href="https://wa.me/543874122849?text=Hola+quiero+empezar">Escríbeme por WhatsApp</a>
-      <button class="btn ghost" onclick="miniQuiz()">Mini‑Quiz (5 preguntas)</button>
+      <      <button class="btn ghost" onclick="miniQuiz()">Mini‑Quiz (5 preguntas)</button>
     </div>
   </div>
 
@@ -147,10 +146,7 @@ function renderMenu(){
     b.onclick = ()=>renderTema(t.id);
     m.appendChild(b);
   });
-  const bAyuda=document.createElement('button');
-  bAyuda.className='btn ghost'; bAyuda.textContent='Ayuda';
-  bAyuda.onclick=()=>ayuda();
-  m.appendChild(bAyuda);
+  
 }
 function renderTema(id){
   const t = temas.find(x=>x.id===id);
