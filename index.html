@@ -1,7 +1,3 @@
-# 1) Montar Drive
-from google.colab import drive
-drive.mount('/content/drive')
-
 # 2) Contenido HTML de la app (Prof. MateSanda)
 html_content = r"""<!doctype html>
 <html lang="es">
@@ -267,11 +263,3 @@ renderMenu();
 </body>
 </html>
 """
-
-# 3) Guardar en tu Drive (Mi unidad)
-save_path = '/content/drive/MyDrive/matematica_matesanda.html'
-with open(save_path, 'w', encoding='utf-8') as f:
-    f.write(html_content)
-
-print('Archivo guardado en:', save_path)
-print('Abre Google Drive > Mi unidad > matematica_matesanda.html y compártelo con "Cualquier persona con el enlace".')
