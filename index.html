@@ -27,7 +27,7 @@
 </head>
 <body>
 <header>
-  <h1>Prof. MateSanda • Entrenamiento de Matemática para ingresantes de (Escuela 3117"La Reyes")</h1>
+  <h1>Prof. MateSanda • Entrenamiento de Matemática (Escuela 3117)</h1>
 </header>
 
 <main>
@@ -36,13 +36,17 @@
     <p>Te doy la bienvenida al entrenamiento interactivo. Elige un tema para empezar. En cualquier momento puedes volver al menú.</p>
     <div class="chips" id="menu"></div>
     <div class="chips" style="margin-top:10px">
+      <button class="btn ghost" onclick="miniQuiz()">Mini‑Quiz (5 preguntas)</button>
     </div>
   </div>
+
   <div id="contenido"></div>
+
   <div class="footer">
     Consejos: responde solo con números cuando se pida. Si te equivocas, verás la corrección al instante.
   </div>
 </main>
+
 <script>
 const temas = [
   {
@@ -210,6 +214,7 @@ function volverMenu(){
   const c = document.getElementById('contenido');
   c.innerHTML = `
     <div class="card">
+      <h3>Ayuda</h3>
       <div class="msg">Escribe solo números cuando se pida. En fracciones usa a/b. Pulsa “Volver al Menú” para cambiar de tema.</div>
       <div class="chips">
         <a class="btn ghost" target="_blank" href="https://wa.me/543874122849?text=Hola+necesito+ayuda">Hablar con docente</a>
