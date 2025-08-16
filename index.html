@@ -36,6 +36,7 @@
     <p>Te doy la bienvenida al entrenamiento interactivo. Elige un tema para empezar. En cualquier momento puedes volver al menú.</p>
     <div class="chips" id="menu"></div>
     <div class="chips" style="margin-top:10px">
+      <a class="btn ghost" target="_blank" href="https://wa.me/543874122849?text=Hola+quiero+empezar">Escríbeme por WhatsApp</a>
       <button class="btn ghost" onclick="miniQuiz()">Mini‑Quiz (5 preguntas)</button>
     </div>
   </div>
@@ -211,13 +212,14 @@ function volverMenu(){
   document.getElementById('contenido').innerHTML='';
   window.scrollTo({top:0,behavior:'smooth'});
 }
+
   const c = document.getElementById('contenido');
   c.innerHTML = `
     <div class="card">
       <h3>Ayuda</h3>
       <div class="msg">Escribe solo números cuando se pida. En fracciones usa a/b. Pulsa “Volver al Menú” para cambiar de tema.</div>
       <div class="chips">
-        <a class="btn ghost" target="_blank" href="https://wa.me/543874122849?text=Hola+necesito+ayuda">Hablar con docente</a>
+        
         <button class="btn primary" onclick="volverMenu()">Volver al Menú</button>
       </div>
     </div>`;
