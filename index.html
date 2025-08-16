@@ -1,4 +1,9 @@
-<!doctype html>
+# 1) Montar Drive
+from google.colab import drive
+drive.mount('/content/drive')
+
+# 2) Contenido HTML de la app (Prof. MateSanda)
+html_content = r"""<!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8" />
@@ -27,23 +32,19 @@
 </head>
 <body>
 <header>
-    <h1>Prof. MateSanda • Entrenamiento de Matemática para Ingresantes de 1 año (Escuela 3117 "La Reyes")</h1>
+  <h1>Prof. MateSanda • Entrenamiento de Matemática para Ingresantes (Escuela N°3117)"La Reyes"</h1>
+</header>
+<main>
   <div class="card" id="bienvenida">
     <h2>¡Hola! Soy el Prof. MateSanda 👋</h2>
     <p>Te doy la bienvenida al entrenamiento interactivo. Elige un tema para empezar. En cualquier momento puedes volver al menú.</p>
     <div class="chips" id="menu"></div>
     <div class="chips" style="margin-top:10px">
-      <      <button class="btn ghost" onclick="miniQuiz()">Mini‑Quiz (5 preguntas)</button>
-    </div>
-  </div>
-
   <div id="contenido"></div>
-
   <div class="footer">
     Consejos: responde solo con números cuando se pida. Si te equivocas, verás la corrección al instante.
   </div>
 </main>
-
 <script>
 const temas = [
   {
@@ -143,7 +144,10 @@ function renderMenu(){
     b.onclick = ()=>renderTema(t.id);
     m.appendChild(b);
   });
-  
+  const bAyuda=document.createElement('button');
+  bAyuda.className='btn ghost'; bAyuda.textContent='Ayuda';
+  bAyuda.onclick=()=>ayuda();
+  m.appendChild(bAyuda);
 }
 function renderTema(id){
   const t = temas.find(x=>x.id===id);
@@ -262,3 +266,12 @@ renderMenu();
 </script>
 </body>
 </html>
+"""
+
+# 3) Guardar en tu Drive (Mi unidad)
+save_path = '/content/drive/MyDrive/matematica_matesanda.html'
+with open(save_path, 'w', encoding='utf-8') as f:
+    f.write(html_content)
+
+print('Archivo guardado en:', save_path)
+print('Abre Google Drive > Mi unidad > matematica_matesanda.html y compártelo con "Cualquier persona con el enlace".')
