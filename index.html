@@ -27,7 +27,7 @@
 </head>
 <body>
 <header>
-  <h1>Prof. MateSanda • Entrenamiento de Matemática para ingresantes  (Escuela 3117"La Reyes")</h1>
+  <h1>Prof. MateSanda • Entrenamiento de Matemática (Escuela 3117)</h1>
 </header>
 
 <main>
@@ -36,7 +36,13 @@
     <p>Te doy la bienvenida al entrenamiento interactivo. Elige un tema para empezar. En cualquier momento puedes volver al menú.</p>
     <div class="chips" id="menu"></div>
     <div class="chips" style="margin-top:10px">
-        <div id="contenido"></div>
+      <a class="btn ghost" target="_blank" href="https://wa.me/543874122849?text=Hola+quiero+empezar">Escríbeme por WhatsApp</a>
+      <button class="btn ghost" onclick="miniQuiz()">Mini‑Quiz (5 preguntas)</button>
+    </div>
+  </div>
+
+  <div id="contenido"></div>
+
   <div class="footer">
     Consejos: responde solo con números cuando se pida. Si te equivocas, verás la corrección al instante.
   </div>
@@ -206,6 +212,7 @@ function volverMenu(){
   document.getElementById('contenido').innerHTML='';
   window.scrollTo({top:0,behavior:'smooth'});
 }
+function ayuda(){
   const c = document.getElementById('contenido');
   c.innerHTML = `
     <div class="card">
