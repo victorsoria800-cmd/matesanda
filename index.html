@@ -1,3 +1,5 @@
+ Contenido HTML de la app (Prof. MateSanda)
+html_content = r"""<!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8" />
@@ -26,7 +28,7 @@
 </head>
 <body>
 <header>
-  <h1>Prof. MateSanda • Entrenamiento de Matemática para Ingresantes (Escuela N°3117)"La Reyes"</h1>
+  <h1>Prof. MateSanda • Entrenamiento de Matemática (Escuela 3117)</h1>
 </header>
 <main>
   <div class="card" id="bienvenida">
@@ -203,6 +205,17 @@ function volverMenu(){
   document.getElementById('contenido').innerHTML='';
   window.scrollTo({top:0,behavior:'smooth'});
 }
+  const c = document.getElementById('contenido');
+  c.innerHTML = `
+    <div class="card">
+      <h3>Ayuda</h3>
+      <div class="msg">Escribe solo números cuando se pida. En fracciones usa a/b. Pulsa “Volver al Menú” para cambiar de tema.</div>
+      <div class="chips">
+        <a class="btn ghost" target="_blank" href="https://wa.me/543874122849?text=Hola+necesito+ayuda">Hablar con docente</a>
+        <button class="btn primary" onclick="volverMenu()">Volver al Menú</button>
+      </div>
+    </div>`;
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 function miniQuiz(){
   const preguntas = [
