@@ -147,10 +147,6 @@ function renderMenu(){
     b.onclick = ()=>renderTema(t.id);
     m.appendChild(b);
   });
-  
-  bAyuda.className='btn ghost'; bAyuda.textContent='Ayuda';
-  bAyuda.onclick=()=>ayuda();
-  m.appendChild(bAyuda);
 }
 function renderTema(id){
   const t = temas.find(x=>x.id===id);
