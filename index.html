@@ -28,19 +28,21 @@ html_content = r"""<!doctype html>
 </head>
 <body>
 <header>
-  <h1>Prof. MateSanda • Entrenamiento de Matemática de ingresantes a 1 año (Escuela 3117"La Reyes")</h1>
+  <h1>Prof. MateSanda • Entrenamiento de Matemática para ingresantes de 1 año (Escuela 3117!La Reyes")</h1>
 </header>
+
 <main>
   <div class="card" id="bienvenida">
     <h2>¡Hola! Soy el Prof. MateSanda 👋</h2>
     <p>Te doy la bienvenida al entrenamiento interactivo. Elige un tema para empezar. En cualquier momento puedes volver al menú.</p>
     <div class="chips" id="menu"></div>
-    <div class="chips" style="margin-top:10px">
+    <div class="chips" style="margin-top:10px"
   <div id="contenido"></div>
   <div class="footer">
     Consejos: responde solo con números cuando se pida. Si te equivocas, verás la corrección al instante.
   </div>
 </main>
+
 <script>
 const temas = [
   {
@@ -205,6 +207,11 @@ function volverMenu(){
   document.getElementById('contenido').innerHTML='';
   window.scrollTo({top:0,behavior:'smooth'});
 }
+function ayuda(){
+  const c = document.getElementById('contenido');
+  c.innerHTML = `
+    <div class="card">
+      <h3>Ayuda</h3>
       <div class="msg">Escribe solo números cuando se pida. En fracciones usa a/b. Pulsa “Volver al Menú” para cambiar de tema.</div>
       <div class="chips">
         <a class="btn ghost" target="_blank" href="https://wa.me/543874122849?text=Hola+necesito+ayuda">Hablar con docente</a>
