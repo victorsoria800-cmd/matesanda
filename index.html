@@ -330,14 +330,14 @@ function miniQuiz(){
   const lista = Array.from({length:nmax}, (_,i)=> m*(i+1));
   const q2 = { e:`Múltiplos de ${m} hasta ${m*nmax} (escribe: ${lista.join(',')}).`, tipo:"texto",
                r:lista.join(','), v:(v)=>normList(v)===lista.join(','), x:`${lista.join(',')}.` };
-  const denMax = dificultad==='facil'?8 : dificultad==='dificil'?14 : 10;
-  const a = rint(1,4), c = rint(2,denMax);
-  const b = rint(1,4), d = rint(2,denMax);
-  const mm = (c*d)/gcd(c,d);
-  const sNum = a*(mm/c) + b*(mm/d);
-  const resp = simpFrac(sNum, mm);
-  const q3 = { e:`${a}/${c} + ${b}/${d} = ? (fracción simplificada)`, tipo:"texto",
-               r:resp, v:(v)=>v.replace(/\s/g,'')===resp, x:`m.c.m.(${c},${d})=${mm} → suma ${sNum}/${mm} = ${resp}.` };
+  const denMax_mq = dificultad==='facil'?8 : dificultad==='dificil'?14 : 10;
+  const a_mq = rint(1,4), c_mq = rint(2,denMax_mq);
+  const b_mq = rint(1,4), d_mq = rint(2,denMax_mq);
+  const mm_mq = (c_mq*d_mq)/gcd(c_mq,d_mq);
+  const sNum_mq = a_mq*(mm_mq/c_mq) + b_mq*(mm_mq/d_mq);
+  const resp_mq = simpFrac(sNum_mq, mm_mq);
+  const q3 = { e:`${a_mq}/${c_mq} + ${b_mq}/${d_mq} = ? (fracción simplificada)`, tipo:"texto",
+               r:resp_mq, v:(v)=>v.replace(/\s/g,'')===resp_mq, x:`m.c.m.(${c_mq},${d_mq})=${mm_mq} → suma ${sNum_mq}/${mm_mq} = ${resp_mq}.` };
   const k = rint(...pickRange([2,6],[2,7],[3,10]));
   const sol = rint(...pickRange([2,10],[2,12],[3,20]));
   const cte = rint(...pickRange([-8,8],[-10,10],[-20,20]));
@@ -377,6 +377,23 @@ function miniQuiz(){
   fin.innerHTML = `<button id="btn_fin" class="btn primary">Finalizar quiz</button>
                    <button id="btn_rep" class="btn">Repetir (nuevas)</button>
                    <button id="btn_volver2" class="btn">Volver al Menú</button>`;
+  qz.appendChild(fin);
+  document.getElementById('btn_fin').addEventListener('click', ()=>{
+    c.innerHTML = `<div class="card">
+      <h3>Resultado</h3>
+      <div class="msg">Tu puntaje: <b>${aciertos}/5</b>. Dificultad: <b>${dificultad}</b></div>
+      <p>${aciertos>=4?'¡Excelente! Sigue así.':'¡Buen intento! Puedes repasar y volver a intentarlo.'}</p>
+      <div class="chips">
+        <button id="btn_rep2" class="btn">Repetir quiz</button>
+        <button id="btn_volver3" class="btn primary">Volver al Menú</button>
+      </div>
+    </div>`;
+    document.getElementById('btn_rep2').addEventListener('click', miniQuiz);
+    document.getElementById('btn_volver3').addEventListener('click', volverMenu);
+  });
+  document.getElementById('btn_rep').addEventListener('click', miniQuiz);
+  document.getElementById('btn_volver2').addEventListener('click', volverMenu);
+}
   qz.appendChild(fin);
   document.getElementById('btn_fin').addEventListener('click', ()=>{
     c.innerHTML = `<div class="card">
