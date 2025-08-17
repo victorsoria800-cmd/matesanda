@@ -31,7 +31,7 @@
 </head>
 <body>
 <header>
-  <h1>Entrenamiento de Matemática para ingresantes (Escuela N° 3117 “La Reyes”) — flujo creado con IA según la cartilla institucional</h1>
+  <h1>Entrenamiento de Matemática para ingresantes (Escuela N° 3117 “La Reyes”) — Flujo creado con IA según la cartilla institucional</h1>
 </header>
 
 <main>
@@ -93,11 +93,11 @@ const temas = [
       const d1 = rint(5, Math.max(6, c1b-1));
       const t1 = rint(n1a,n1b);
       const a = rint(a1,b1), b = rint(a1,b1);
-      const c = rint(c1a,c1b), d = Math.min(c-1, d1);
+      const c_nat = rint(c1a,c1b), d = Math.min(c_nat-1, d1);
       return [
         { enunciado:`¿Cuál es el siguiente de ${t1}?`, tipo:"num", resp:t1+1, explic:`El siguiente es ${t1} + 1 = ${t1+1}.` },
         { enunciado:`¿Cuánto es ${a} + ${b}?`, tipo:"num", resp:a+b, explic:`${a} + ${b} = ${a+b}.` },
-        { enunciado:`Si tenía ${c} caramelos y regalé ${d}, ¿cuántos quedan?`, tipo:"num", resp:c-d, explic:`${c} − ${d} = ${c-d}.` },
+        { enunciado:`Si tenía ${c_nat} caramelos y regalé ${d}, ¿cuántos quedan?`, tipo:"num", resp:c_nat-d, explic:`${c_nat} − ${d} = ${c_nat-d}.` },
       ];
     }
   },
@@ -127,8 +127,8 @@ const temas = [
     preguntas: () => {
       const na = -rint(...pickRange([1,6],[1,9],[3,15]));
       const nb = -rint(...pickRange([1,6],[1,9],[3,15]));
-      const c = rint(...pickRange([1,9],[1,12],[5,20]));
-      const d = rint(...pickRange([10,15],[13,25],[25,60]));
+      const c_ent = rint(...pickRange([1,9],[1,12],[5,20]));
+      const d_ent = rint(...pickRange([10,15],[13,25],[25,60]));
       const set = [
         -rint(...pickRange([1,5],[1,9],[2,12])),
         rint(...pickRange([0,3],[0,5],[0,9])),
@@ -140,9 +140,9 @@ const temas = [
         { enunciado:`Completa: ${na} + (${nb}) = ?`, tipo:"texto",
           resp:String(na+nb), valid:(v)=>v.replace(/\s/g,'')===String(na+nb),
           explic:`Sumas negativos: ${na} + ${nb} = ${na+nb}.` },
-        { enunciado:`${c} − ${d} = ?`, tipo:"texto",
-          resp:String(c-d), valid:(v)=>v.replace(/\s/g,'')===String(c-d),
-          explic:`${c} − ${d} = ${c-d}.` },
+        { enunciado:`${c_ent} − ${d_ent} = ?`, tipo:"texto",
+          resp:String(c_ent-d_ent), valid:(v)=>v.replace(/\s/g,'')===String(c_ent-d_ent),
+          explic:`${c_ent} − ${d_ent} = ${c_ent-d_ent}.` },
         { enunciado:`Ordena de menor a mayor: ${set.join(', ')} (ej.: -5,-2,0,3)`, tipo:"texto",
           resp:sorted, valid:(v)=>normList(v)===sorted, explic:`En la recta: ${sorted.replace(/,/g,' < ')}.` }
       ];
@@ -157,9 +157,9 @@ const temas = [
       const f2 = [rint(1,5), rint(2,denMax)];
       const v1 = f1[0]/f1[1], v2 = f2[0]/f2[1];
       const mayor = v1>v2 ? `${f1[0]}/${f1[1]}` : `${f2[0]}/${f2[1]}`;
-      const a = rint(1,5), b = rint(1,5), c = rint(2,denMax), d = rint(2,denMax);
-      const mm = (c*d)/gcd(c,d);
-      const sNum = a*(mm/c) + b*(mm/d);
+      const a_frac = rint(1,5), b_frac = rint(1,5), c_frac = rint(2,denMax), d_frac = rint(2,denMax);
+      const mm = (c_frac*d_frac)/gcd(c_frac,d_frac);
+      const sNum = a_frac*(mm/c_frac) + b_frac*(mm/d_frac);
       const simp = simpFrac(sNum, mm);
       const pool = dificultad==='facil' ? [0.25,0.5,0.75] : (dificultad==='dificil' ? [0.125,0.2,0.25,0.4,0.5,0.75] : [0.2,0.25,0.4,0.5,0.75]);
       const dec = pool[rint(0,pool.length-1)];
@@ -167,9 +167,9 @@ const temas = [
       return [
         { enunciado:`¿Cuál es mayor: ${f1[0]}/${f1[1]} o ${f2[0]}/${f2[1]}? (responde a/b)`, tipo:"texto",
           resp:mayor, valid:(v)=>v.replace(/\s/g,'')===mayor, explic:`${mayor} es mayor.` },
-        { enunciado:`${a}/${c} + ${b}/${d} = ? (fracción simplificada)`, tipo:"texto",
+        { enunciado:`${a_frac}/${c_frac} + ${b_frac}/${d_frac} = ? (fracción simplificada)`, tipo:"texto",
           resp:simp, valid:(v)=>v.replace(/\s/g,'')===simp,
-          explic:`m.c.m. ${c},${d} = ${mm} → suma ${sNum}/${mm} = ${simp}.` },
+          explic:`m.c.m. ${c_frac},${d_frac} = ${mm} → suma ${sNum}/${mm} = ${simp}.` },
         { enunciado:`Convierte ${String(dec).replace('.',',')} a fracción simplificada.`, tipo:"texto",
           resp:mapDec[dec], valid:(v)=>v.replace(/\s/g,'')===mapDec[dec], explic:`${dec} = ${mapDec[dec]}.` }
       ];
@@ -217,209 +217,18 @@ const temas = [
     exp:"Perímetro: suma de lados. Áreas: Rectángulo A= b×h; Triángulo A=(b×h)/2; Círculo A=πr², P=2πr.",
     ejemplo:"Rectángulo 8×5 → A=40 cm²; P=26 cm.",
     preguntas: () => {
-      const b = rint(...pickRange([6,10],[6,14],[8,20]));
-      const h = rint(...pickRange([4,8],[4,10],[6,16]));
-      const r = rint(...pickRange([2,4],[2,6],[3,8]));
-      const areaC = +(Math.PI*r*r).toFixed(2);
-      const lado = rint(...pickRange([4,8],[5,12],[8,20]));
+      const b_geo = rint(...pickRange([6,10],[6,14],[8,20]));
+      const h_geo = rint(...pickRange([4,8],[4,10],[6,16]));
+      const r_geo = rint(...pickRange([2,4],[2,6],[3,8]));
+      const areaC = +(Math.PI*r_geo*r_geo).toFixed(2);
+      const lado_geo = rint(...pickRange([4,8],[5,12],[8,20]));
       return [
-        { enunciado:`Triángulo b=${b}, h=${h}. Área = ?`, tipo:"num", resp:(b*h)/2, explic:`(${b}×${h})/2 = ${(b*h)/2} cm².` },
-        { enunciado:`Círculo r=${r}, usa π≈3,14. Área ≈ ?`, tipo:"texto",
+        { enunciado:`Triángulo b=${b_geo}, h=${h_geo}. Área = ?`, tipo:"num", resp:(b_geo*h_geo)/2, explic:`(${b_geo}×${h_geo})/2 = ${(b_geo*h_geo)/2} cm².` },
+        { enunciado:`Círculo r=${r_geo}, usa π≈3,14. Área ≈ ?`, tipo:"texto",
           resp:String(areaC), valid:(v)=>near(v, areaC, 0.2),
-          explic:`πr² ≈ 3,14×${r*r} ≈ ${areaC}.` },
-        { enunciado:`Cuadrado lado ${lado}. Perímetro = ?`, tipo:"num", resp:4*lado, explic:`4×${lado} = ${4*lado} cm.` }
+          explic:`πr² ≈ 3,14×${r_geo*r_geo} ≈ ${areaC}.` },
+        { enunciado:`Cuadrado lado ${lado_geo}. Perímetro = ?`, tipo:"num", resp:4*lado_geo, explic:`4×${lado_geo} = ${4*lado_geo} cm.` }
       ];
     }
   }
 ];
-
-function renderMenu(){
-  const m = document.getElementById('menu');
-  if(!m) return;
-  m.innerHTML = '';
-  temas.forEach(t=>{
-    const b = document.createElement('button');
-    b.className='btn';
-    b.textContent = t.titulo;
-    b.addEventListener('click', ()=>renderTema(t.id));
-    m.appendChild(b);
-  });
-}
-function setDificultad(d){
-  dificultad = d;
-  ['facil','medio','dificil'].forEach(k=>{
-    const el = document.getElementById('dif_'+k);
-    if(el) el.classList.toggle('active', k===d);
-  });
-  const h3 = document.querySelector('#contenido h3');
-  if(h3){
-    const t = temas.find(x=>x.titulo===h3.textContent);
-    if(t) renderTema(t.id);
-  }
-}
-function renderTema(id){
-  const t = temas.find(x=>x.id===id);
-  const pregs = typeof t.preguntas === 'function' ? t.preguntas() : t.preguntas;
-  const c = document.getElementById('contenido');
-  c.innerHTML = `
-    <div class="card">
-      <h3>${t.titulo}</h3>
-      <div class="msg">${t.exp}</div>
-      <div class="msg"><b>Ejemplo:</b> ${t.ejemplo}</div>
-      <div id="qs"></div>
-      <div class="chips">
-        <button id="btn_volver" class="btn primary">Volver al Menú</button>
-        <button id="btn_practicar" class="btn">Practicar más</button>
-        <button id="btn_siguiente" class="btn">Siguiente tema</button>
-      </div>
-    </div>
-  `;
-  renderPreguntas(pregs);
-  document.getElementById('btn_volver').addEventListener('click', volverMenu);
-  document.getElementById('btn_practicar').addEventListener('click', ()=>renderTema(t.id));
-  document.getElementById('btn_siguiente').addEventListener('click', ()=>siguiente(t.id));
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function renderPreguntas(pregs){
-  const cont = document.getElementById('qs');
-  cont.innerHTML = '';
-  pregs.forEach((q,i)=>{
-    const div = document.createElement('div');
-    div.className='q';
-    const input = q.tipo==='num'
-      ? `<input type="number" id="inp_${i}" />`
-      : `<input type="text" id="inp_${i}" placeholder="Respuesta" />`;
-    div.innerHTML = `
-      <div>${i+1}) ${q.enunciado}</div>
-      <div style="margin:6px 0">${input}
-        <button class="btn" id="btn_chk_${i}">Comprobar</button>
-      </div>
-      <div id="fb_${i}"></div>
-    `;
-    cont.appendChild(div);
-    document.getElementById(`btn_chk_${i}`).addEventListener('click', ()=>check(i));
-  });
-  window.currentPregs = pregs;
-}
-function check(i){
-  const q = window.currentPregs[i];
-  const v = document.getElementById('inp_'+i).value.trim();
-  let ok=false;
-  if(q.valid){ ok = q.valid(v); }
-  else if(q.tipo==='num'){ ok = Number(v)==q.resp; }
-  else { ok = v.replace(/\s/g,'').toLowerCase()===String(q.resp).replace(/\s/g,'').toLowerCase(); }
-  const fb = document.getElementById('fb_'+i);
-  fb.innerHTML = ok ? `<div class="ok">¡Correcto! ✅</div>` : `<div class="err">No es correcto. ${q.explic}</div>`;
-}
-function siguiente(id){
-  const idx = temas.findIndex(t=>t.id===id);
-  const next = temas[(idx+1)%temas.length].id;
-  renderTema(next);
-}
-function volverMenu(){
-  document.getElementById('contenido').innerHTML='';
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function miniQuiz(){
-  const rA = pickRange([1,6],[1,9],[3,15]);
-  const rB = pickRange([3,9],[3,12],[8,20]);
-  const a1 = -rint(...rA), b1 = rint(...rB);
-  const q1 = { e:`Suma: ${a1} + ${b1} = ?`, tipo:"num", r:a1 + b1, x:`${a1} + ${b1} = ${a1+b1}.` };
-  const rM = pickRange([2,6],[3,9],[4,12]);
-  const rN = pickRange([3,4],[3,6],[4,7]);
-  const m = rint(...rM), nmax = rint(...rN);
-  const lista = Array.from({length:nmax}, (_,i)=> m*(i+1));
-  const q2 = { e:`Múltiplos de ${m} hasta ${m*nmax} (escribe: ${lista.join(',')}).`, tipo:"texto",
-               r:lista.join(','), v:(v)=>normList(v)===lista.join(','), x:`${lista.join(',')}.` };
-  const denMax = dificultad==='facil'?8 : dificultad==='dificil'?14 : 10;
-  const a = rint(1,4), c = rint(2,denMax);
-  const b = rint(1,4), d = rint(2,denMax);
-  const mm = (c*d)/gcd(c,d);
-  const sNum = a*(mm/c) + b*(mm/d);
-  const resp = simpFrac(sNum, mm);
-  const q3 = { e:`${a}/${c} + ${b}/${d} = ? (fracción simplificada)`, tipo:"texto",
-               r:resp, v:(v)=>v.replace(/\s/g,'')===resp, x:`m.c.m.(${c},${d})=${mm} → suma ${sNum}/${mm} = ${resp}.` };
-  const k = rint(...pickRange([2,6],[2,7],[3,10]));
-  const sol = rint(...pickRange([2,10],[2,12],[3,20]));
-  const cte = rint(...pickRange([-8,8],[-10,10],[-20,20]));
-  const rhs = k*sol + cte;
-  const q4 = { e:`${k}x ${cte>=0?'+':''}${cte} = ${rhs}. ¿x = ?`, tipo:"num", r:sol, x:`${k}x = ${rhs} ${cte>=0?'-':''} ${Math.abs(cte)} → ${k}x = ${k*sol} → x = ${sol}.` };
-  const b2 = rint(...pickRange([4,9],[5,12],[8,16]));
-  const h2 = rint(...pickRange([3,8],[3,10],[6,14]));
-  const q5 = { e:`Área de rectángulo ${b2}×${h2}`, tipo:"num", r:b2*h2, x:`${b2}×${h2} = ${b2*h2}.` };
-
-  const preguntas = [q1, q2, q3, q4, q5];
-  let aciertos=0;
-  const c = document.getElementById('contenido');
-  c.innerHTML = `<div class="card"><h3>Mini‑Quiz (5)</h3>
-    <div class="muted">Dificultad actual: <b>${dificultad.toUpperCase()}</b></div>
-    <div id="quiz"></div></div>`;
-  const qz = document.getElementById('quiz');
-  preguntas.forEach((q,i)=>{
-    const inp = q.tipo==='num'?`<input type="number" id="mq_${i}">`:`<input type="text" id="mq_${i}">`;
-    const div = document.createElement('div');
-    div.className='q';
-    div.innerHTML = `<div>${i+1}) ${q.e}</div>
-      <div>${inp} <button class="btn" id="btn_mq_${i}">Comprobar</button></div>
-      <div id="mqfb_${i}"></div>`;
-    qz.appendChild(div);
-    document.getElementById(`btn_mq_${i}`).addEventListener('click', ()=>{
-      const v = document.getElementById('mq_'+i).value.trim();
-      let ok=false;
-      if(q.v){ ok = q.v(v); }
-      else if(q.tipo==='num'){ ok = Number(v)==q.r; }
-      else { ok = v.replace(/\s/g,'')===String(q.r); }
-      if(ok) aciertos++;
-      document.getElementById('mqfb_'+i).innerHTML = ok ? `<span class="ok">¡Correcto!</span>` : `<span class="err">Incorrecto.</span> <span>${q.x}</span>`;
-    });
-  });
-  const fin = document.createElement('div');
-  fin.style.marginTop='10px';
-  fin.innerHTML = `<button id="btn_fin" class="btn primary">Finalizar quiz</button>
-                   <button id="btn_rep" class="btn">Repetir (nuevas)</button>
-                   <button id="btn_volver2" class="btn">Volver al Menú</button>`;
-  qz.appendChild(fin);
-  document.getElementById('btn_fin').addEventListener('click', ()=>{
-    c.innerHTML = `<div class="card">
-      <h3>Resultado</h3>
-      <div class="msg">Tu puntaje: <b>${aciertos}/5</b>. Dificultad: <b>${dificultad}</b></div>
-      <p>${aciertos>=4?'¡Excelente! Sigue así.':'¡Buen intento! Puedes repasar y volver a intentarlo.'}</p>
-      <div class="chips">
-        <button id="btn_rep2" class="btn">Repetir quiz</button>
-        <button id="btn_volver3" class="btn primary">Volver al Menú</button>
-      </div>
-    </div>`;
-    document.getElementById('btn_rep2').addEventListener('click', miniQuiz);
-    document.getElementById('btn_volver3').addEventListener('click', volverMenu);
-  });
-  document.getElementById('btn_rep').addEventListener('click', miniQuiz);
-  document.getElementById('btn_volver2').addEventListener('click', volverMenu);
-}
-
-function bindTopBar(){
-  const bF = document.getElementById('dif_facil');
-  const bM = document.getElementById('dif_medio');
-  const bD = document.getElementById('dif_dificil');
-  if(bF && bM && bD){
-    bF.addEventListener('click', ()=>setDificultad('facil'));
-    bM.addEventListener('click', ()=>setDificultad('medio'));
-    bD.addEventListener('click', ()=>setDificultad('dificil'));
-  }
-  const btnQuiz = document.getElementById('btn_quiz');
-  if(btnQuiz) btnQuiz.addEventListener('click', miniQuiz);
-}
-
-function init(){
-  bindTopBar();
-  renderMenu();
-}
-document.addEventListener('DOMContentLoaded', ()=> {
-  try{ init(); } catch(e){ console.error('Init error:', e); }
-});
-setTimeout(()=>{ try{
-  const m = document.getElementById('menu');
-  if(m && m.children.length===0) init();
-} catch(e){} }, 700);
-</script>
-</body>
-</html>
