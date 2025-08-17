@@ -319,7 +319,7 @@ function volverMenu(){
   document.getElementById('contenido').innerHTML='';
   window.scrollTo({top:0,behavior:'smooth'});
 }
-function miniQuiz(){
+ffunction miniQuiz(){
   const rA = pickRange([1,6],[1,9],[3,15]);
   const rB = pickRange([3,9],[3,12],[8,20]);
   const a1 = -rint(...rA), b1 = rint(...rB);
@@ -394,47 +394,3 @@ function miniQuiz(){
   document.getElementById('btn_rep').addEventListener('click', miniQuiz);
   document.getElementById('btn_volver2').addEventListener('click', volverMenu);
 }
-  qz.appendChild(fin);
-  document.getElementById('btn_fin').addEventListener('click', ()=>{
-    c.innerHTML = `<div class="card">
-      <h3>Resultado</h3>
-      <div class="msg">Tu puntaje: <b>${aciertos}/5</b>. Dificultad: <b>${dificultad}</b></div>
-      <p>${aciertos>=4?'¡Excelente! Sigue así.':'¡Buen intento! Puedes repasar y volver a intentarlo.'}</p>
-      <div class="chips">
-        <button id="btn_rep2" class="btn">Repetir quiz</button>
-        <button id="btn_volver3" class="btn primary">Volver al Menú</button>
-      </div>
-    </div>`;
-    document.getElementById('btn_rep2').addEventListener('click', miniQuiz);
-    document.getElementById('btn_volver3').addEventListener('click', volverMenu);
-  });
-  document.getElementById('btn_rep').addEventListener('click', miniQuiz);
-  document.getElementById('btn_volver2').addEventListener('click', volverMenu);
-}
-  function bindTopBar(){
-  const bF = document.getElementById('dif_facil');
-  const bM = document.getElementById('dif_medio');
-  const bD = document.getElementById('dif_dificil');
-  if(bF && bM && bD){
-    bF.addEventListener('click', ()=>setDificultad('facil'));
-    bM.addEventListener('click', ()=>setDificultad('medio'));
-    bD.addEventListener('click', ()=>setDificultad('dificil'));
-  }
-  const btnQuiz = document.getElementById('btn_quiz');
-  if(btnQuiz) btnQuiz.addEventListener('click', miniQuiz);
-}
-
-function init(){
-  bindTopBar();
-  renderMenu();
-}
-document.addEventListener('DOMContentLoaded', ()=> {
-  try{ init(); } catch(e){ console.error('Init error:', e); }
-});
-setTimeout(()=>{ try{
-  const m = document.getElementById('menu');
-  if(m && m.children.length===0) init();
-} catch(e){} }, 700);
-</script>
-</body>
-</html>
