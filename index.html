@@ -232,7 +232,6 @@ const temas = [
     }
   }
 ];
-
 function renderMenu(){
   const m = document.getElementById('menu');
   if(!m) return;
@@ -395,8 +394,7 @@ function miniQuiz(){
   document.getElementById('btn_rep').addEventListener('click', miniQuiz);
   document.getElementById('btn_volver2').addEventListener('click', volverMenu);
 }
-
-function bindTopBar(){
+  function bindTopBar(){
   const bF = document.getElementById('dif_facil');
   const bM = document.getElementById('dif_medio');
   const bD = document.getElementById('dif_dificil');
