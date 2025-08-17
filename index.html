@@ -232,3 +232,194 @@ const temas = [
     }
   }
 ];
+
+function renderMenu(){
+  const m = document.getElementById('menu');
+  if(!m) return;
+  m.innerHTML = '';
+  temas.forEach(t=>{
+    const b = document.createElement('button');
+    b.className='btn';
+    b.textContent = t.titulo;
+    b.addEventListener('click', ()=>renderTema(t.id));
+    m.appendChild(b);
+  });
+}
+function setDificultad(d){
+  dificultad = d;
+  ['facil','medio','dificil'].forEach(k=>{
+    const el = document.getElementById('dif_'+k);
+    if(el) el.classList.toggle('active', k===d);
+  });
+  const h3 = document.querySelector('#contenido h3');
+  if(h3){
+    const t = temas.find(x=>x.titulo===h3.textContent);
+    if(t) renderTema(t.id);
+  }
+}
+function renderTema(id){
+  const t = temas.find(x=>x.id===id);
+  const pregs = typeof t.preguntas === 'function' ? t.preguntas() : t.preguntas;
+  const c = document.getElementById('contenido');
+  c.innerHTML = `
+    <div class="card">
+      <h3>${t.titulo}</h3>
+      <div class="msg">${t.exp}</div>
+      <div class="msg"><b>Ejemplo:</b> ${t.ejemplo}</div>
+      <div id="qs"></div>
+      <div class="chips">
+        <button id="btn_volver" class="btn primary">Volver al Menú</button>
+        <button id="btn_practicar" class="btn">Practicar más</button>
+        <button id="btn_siguiente" class="btn">Siguiente tema</button>
+      </div>
+    </div>
+  `;
+  renderPreguntas(pregs);
+  document.getElementById('btn_volver').addEventListener('click', volverMenu);
+  document.getElementById('btn_practicar').addEventListener('click', ()=>renderTema(t.id));
+  document.getElementById('btn_siguiente').addEventListener('click', ()=>siguiente(t.id));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function renderPreguntas(pregs){
+  const cont = document.getElementById('qs');
+  cont.innerHTML = '';
+  pregs.forEach((q,i)=>{
+    const div = document.createElement('div');
+    div.className='q';
+    const input = q.tipo==='num'
+      ? `<input type="number" id="inp_${i}" />`
+      : `<input type="text" id="inp_${i}" placeholder="Respuesta" />`;
+    div.innerHTML = `
+      <div>${i+1}) ${q.enunciado}</div>
+      <div style="margin:6px 0">${input}
+        <button class="btn" id="btn_chk_${i}">Comprobar</button>
+      </div>
+      <div id="fb_${i}"></div>
+    `;
+    cont.appendChild(div);
+    document.getElementById(`btn_chk_${i}`).addEventListener('click', ()=>check(i));
+  });
+  window.currentPregs = pregs;
+}
+function check(i){
+  const q = window.currentPregs[i];
+  const v = document.getElementById('inp_'+i).value.trim();
+  let ok=false;
+  if(q.valid){ ok = q.valid(v); }
+  else if(q.tipo==='num'){ ok = Number(v)==q.resp; }
+  else { ok = v.replace(/\s/g,'').toLowerCase()===String(q.resp).replace(/\s/g,'').toLowerCase(); }
+  const fb = document.getElementById('fb_'+i);
+  fb.innerHTML = ok ? `<div class="ok">¡Correcto! ✅</div>` : `<div class="err">No es correcto. ${q.explic}</div>`;
+}
+function siguiente(id){
+  const idx = temas.findIndex(t=>t.id===id);
+  const next = temas[(idx+1)%temas.length].id;
+  renderTema(next);
+}
+function volverMenu(){
+  document.getElementById('contenido').innerHTML='';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function miniQuiz(){
+  const rA = pickRange([1,6],[1,9],[3,15]);
+  const rB = pickRange([3,9],[3,12],[8,20]);
+  const a1 = -rint(...rA), b1 = rint(...rB);
+  const q1 = { e:`Suma: ${a1} + ${b1} = ?`, tipo:"num", r:a1 + b1, x:`${a1} + ${b1} = ${a1+b1}.` };
+  const rM = pickRange([2,6],[3,9],[4,12]);
+  const rN = pickRange([3,4],[3,6],[4,7]);
+  const m = rint(...rM), nmax = rint(...rN);
+  const lista = Array.from({length:nmax}, (_,i)=> m*(i+1));
+  const q2 = { e:`Múltiplos de ${m} hasta ${m*nmax} (escribe: ${lista.join(',')}).`, tipo:"texto",
+               r:lista.join(','), v:(v)=>normList(v)===lista.join(','), x:`${lista.join(',')}.` };
+  const denMax = dificultad==='facil'?8 : dificultad==='dificil'?14 : 10;
+  const a = rint(1,4), c = rint(2,denMax);
+  const b = rint(1,4), d = rint(2,denMax);
+  const mm = (c*d)/gcd(c,d);
+  const sNum = a*(mm/c) + b*(mm/d);
+  const resp = simpFrac(sNum, mm);
+  const q3 = { e:`${a}/${c} + ${b}/${d} = ? (fracción simplificada)`, tipo:"texto",
+               r:resp, v:(v)=>v.replace(/\s/g,'')===resp, x:`m.c.m.(${c},${d})=${mm} → suma ${sNum}/${mm} = ${resp}.` };
+  const k = rint(...pickRange([2,6],[2,7],[3,10]));
+  const sol = rint(...pickRange([2,10],[2,12],[3,20]));
+  const cte = rint(...pickRange([-8,8],[-10,10],[-20,20]));
+  const rhs = k*sol + cte;
+  const q4 = { e:`${k}x ${cte>=0?'+':''}${cte} = ${rhs}. ¿x = ?`, tipo:"num", r:sol, x:`${k}x = ${rhs} ${cte>=0?'-':''} ${Math.abs(cte)} → ${k}x = ${k*sol} → x = ${sol}.` };
+  const b2 = rint(...pickRange([4,9],[5,12],[8,16]));
+  const h2 = rint(...pickRange([3,8],[3,10],[6,14]));
+  const q5 = { e:`Área de rectángulo ${b2}×${h2}`, tipo:"num", r:b2*h2, x:`${b2}×${h2} = ${b2*h2}.` };
+
+  const preguntas = [q1, q2, q3, q4, q5];
+  let aciertos=0;
+  const c = document.getElementById('contenido');
+  c.innerHTML = `<div class="card"><h3>Mini‑Quiz (5)</h3>
+    <div class="muted">Dificultad actual: <b>${dificultad.toUpperCase()}</b></div>
+    <div id="quiz"></div></div>`;
+  const qz = document.getElementById('quiz');
+  preguntas.forEach((q,i)=>{
+    const inp = q.tipo==='num'?`<input type="number" id="mq_${i}">`:`<input type="text" id="mq_${i}">`;
+    const div = document.createElement('div');
+    div.className='q';
+    div.innerHTML = `<div>${i+1}) ${q.e}</div>
+      <div>${inp} <button class="btn" id="btn_mq_${i}">Comprobar</button></div>
+      <div id="mqfb_${i}"></div>`;
+    qz.appendChild(div);
+    document.getElementById(`btn_mq_${i}`).addEventListener('click', ()=>{
+      const v = document.getElementById('mq_'+i).value.trim();
+      let ok=false;
+      if(q.v){ ok = q.v(v); }
+      else if(q.tipo==='num'){ ok = Number(v)==q.r; }
+      else { ok = v.replace(/\s/g,'')===String(q.r); }
+      if(ok) aciertos++;
+      document.getElementById('mqfb_'+i).innerHTML = ok ? `<span class="ok">¡Correcto!</span>` : `<span class="err">Incorrecto.</span> <span>${q.x}</span>`;
+    });
+  });
+  const fin = document.createElement('div');
+  fin.style.marginTop='10px';
+  fin.innerHTML = `<button id="btn_fin" class="btn primary">Finalizar quiz</button>
+                   <button id="btn_rep" class="btn">Repetir (nuevas)</button>
+                   <button id="btn_volver2" class="btn">Volver al Menú</button>`;
+  qz.appendChild(fin);
+  document.getElementById('btn_fin').addEventListener('click', ()=>{
+    c.innerHTML = `<div class="card">
+      <h3>Resultado</h3>
+      <div class="msg">Tu puntaje: <b>${aciertos}/5</b>. Dificultad: <b>${dificultad}</b></div>
+      <p>${aciertos>=4?'¡Excelente! Sigue así.':'¡Buen intento! Puedes repasar y volver a intentarlo.'}</p>
+      <div class="chips">
+        <button id="btn_rep2" class="btn">Repetir quiz</button>
+        <button id="btn_volver3" class="btn primary">Volver al Menú</button>
+      </div>
+    </div>`;
+    document.getElementById('btn_rep2').addEventListener('click', miniQuiz);
+    document.getElementById('btn_volver3').addEventListener('click', volverMenu);
+  });
+  document.getElementById('btn_rep').addEventListener('click', miniQuiz);
+  document.getElementById('btn_volver2').addEventListener('click', volverMenu);
+}
+
+function bindTopBar(){
+  const bF = document.getElementById('dif_facil');
+  const bM = document.getElementById('dif_medio');
+  const bD = document.getElementById('dif_dificil');
+  if(bF && bM && bD){
+    bF.addEventListener('click', ()=>setDificultad('facil'));
+    bM.addEventListener('click', ()=>setDificultad('medio'));
+    bD.addEventListener('click', ()=>setDificultad('dificil'));
+  }
+  const btnQuiz = document.getElementById('btn_quiz');
+  if(btnQuiz) btnQuiz.addEventListener('click', miniQuiz);
+}
+
+function init(){
+  bindTopBar();
+  renderMenu();
+}
+document.addEventListener('DOMContentLoaded', ()=> {
+  try{ init(); } catch(e){ console.error('Init error:', e); }
+});
+setTimeout(()=>{ try{
+  const m = document.getElementById('menu');
+  if(m && m.children.length===0) init();
+} catch(e){} }, 700);
+</script>
+</body>
+</html>
