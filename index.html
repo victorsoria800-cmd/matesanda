@@ -6,6 +6,16 @@
 <title>Entrenamiento Matemática - Prof. MateSanda</title>
 <style>
   :root { --c1:#0d6efd; --bg:#f7f9fc; --card:#ffffff; --ok:#16a34a; --err:#dc2626; --muted:#64748b; }
+  <script>
+(function(){
+  const box=document.createElement('div');
+  box.style.cssText='position:fixed;bottom:10px;right:10px;max-width:50vw;max-height:40vh;overflow:auto;background:#111;color:#0f0;padding:10px;border-radius:8px;font:12px monospace;z-index:99999';
+  document.body.appendChild(box);
+  function log(m){ const d=document.createElement('div'); d.textContent=m; box.appendChild(d); }
+  window.addEventListener('error', e=>log('ERROR: '+e.message));
+  log('Debug iniciado');
+})();
+</script>
   body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);margin:0;color:#111}
   header{background:var(--c1);color:#fff;padding:18px 16px}
   header h1{margin:0;font-size:20px}
@@ -32,7 +42,7 @@
 </head>
 <body>
 <header>
-  <h1>Entrenamiento de Matemática para ingresantes (Escuela N° 3117 “La Reyes”) — flujo creado con IA según la cartilla institucional</h1>
+  <h1>Entrenamiento de Matemática para ingresantes (Escuela N° 3117 “La Reyes”) — Flujo creado con IA según la cartilla institucional</h1>
 </header>
 
 <main>
@@ -201,7 +211,7 @@ const temas = [
       ];
     }
   },
-  { id:"geometria", titulo:"Geometría (planas)",
+  { id:"geometria", titulo:"Geometría (plana)",
     exp:"Perímetro: suma de lados. Áreas: Rectángulo A= b×h; Triángulo A=(b×h)/2; Círculo A=πr², P=2πr.",
     ejemplo:"Rectángulo 8×5 → A=40 cm²; P=26 cm.",
     preguntas: () => {
