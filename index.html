@@ -1,4 +1,4 @@
-“!”
+<!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8" />
@@ -20,11 +20,11 @@
   .msg{padding:12px 14px;border-radius:10px;margin:10px 0;background:#f1f5f9}
   .ok{color:var(--ok);font-weight:600}
   .err{color:var(--err);font-weight:600}
-  .muted{color:var(--muted)}
+  .muted{color:#64748b}
   .footer{font-size:12px;color:#475569;margin-top:16px}
   input[type=text], input[type=number]{padding:10px;border:1px solid #e5e7eb;border-radius:8px;width:120px}
   .q{margin:10px 0}
-  /* Bloquea cualquier rastro de WhatsApp/Ayuda */
+  /* Bloquea cualquier rastro de WhatsApp/Ayuda (cumplimiento) */
   a[href*="wa.me"], a[href*="api.whatsapp.com"],
   #btn-whatsapp, [id*="whatsapp" i], [class*="whatsapp" i],
   #btn-ayuda, [id*="ayuda" i], .ayuda { display: none !important; }
@@ -263,7 +263,6 @@ function renderTema(id){
     </div>
   `;
   renderPreguntas(pregs);
-  // listeners de los 3 botones del tema
   document.getElementById('btn_volver').addEventListener('click', volverMenu);
   document.getElementById('btn_practicar').addEventListener('click', ()=>renderTema(t.id));
   document.getElementById('btn_siguiente').addEventListener('click', ()=>siguiente(t.id));
@@ -286,8 +285,7 @@ function renderPreguntas(pregs){
       <div id="fb_${i}"></div>
     `;
     cont.appendChild(div);
-    // listener de comprobar
-    document.getElementById(`btn_chk_${i}`).addEventListener('click', ()=>check(i));
+    document.getElementById(\`btn_chk_\${i}\`).addEventListener('click', ()=>check(i));
   });
   window.currentPregs = pregs;
 }
@@ -353,7 +351,7 @@ function miniQuiz(){
       <div>${inp} <button class="btn" id="btn_mq_${i}">Comprobar</button></div>
       <div id="mqfb_${i}"></div>`;
     qz.appendChild(div);
-    document.getElementById(`btn_mq_${i}`).addEventListener('click', ()=>{
+    document.getElementById(\`btn_mq_\${i}\`).addEventListener('click', ()=>{
       const v = document.getElementById('mq_'+i).value.trim();
       let ok=false;
       if(q.v){ ok = q.v(v); }
@@ -386,7 +384,6 @@ function miniQuiz(){
   document.getElementById('btn_volver2').addEventListener('click', volverMenu);
 }
 
-// Bind de eventos de UI principales (sin onclick inline)
 function bindTopBar(){
   const bF = document.getElementById('dif_facil');
   const bM = document.getElementById('dif_medio');
@@ -400,7 +397,6 @@ function bindTopBar(){
   if(btnQuiz) btnQuiz.addEventListener('click', miniQuiz);
 }
 
-// Inicialización robusta
 function init(){
   bindTopBar();
   renderMenu();
@@ -408,7 +404,6 @@ function init(){
 document.addEventListener('DOMContentLoaded', ()=> {
   try{ init(); } catch(e){ console.error('Init error:', e); }
 });
-// Fallback por si algo retrasa el DOM
 setTimeout(()=>{ try{
   const m = document.getElementById('menu');
   if(m && m.children.length===0) init();
@@ -416,4 +411,3 @@ setTimeout(()=>{ try{
 </script>
 </body>
 </html>
-v=7
