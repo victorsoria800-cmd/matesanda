@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Entrenamiento Matemática - Prof. MateSanda</title>
 <style>
-  :root { --c1:#0d6efd; --bg:#f7f9fc; --card:#ffffff; --ok:#16a34a; --err:#dc2626; }
+  :root { --c1:#0d6efd; --bg:#f7f9fc; --card:#ffffff; --ok:#16a34a; --err:#dc2626; --muted:#64748b; }
   body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);margin:0;color:#111}
   header{background:var(--c1);color:#fff;padding:18px 16px}
   header h1{margin:0;font-size:20px}
@@ -15,28 +15,44 @@
   .btn{border:0;border-radius:10px;padding:12px 14px;background:#eef2ff;color:#1e3a8a;cursor:pointer}
   .btn.primary{background:var(--c1);color:#fff}
   .btn.ghost{background:#fff;border:1px solid #e5e7eb;color:#111}
+  .btn.toggle{background:#e2e8f0;color:#0f172a}
+  .btn.toggle.active{background:#0ea5e9;color:#fff}
   .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
   .hidden{display:none}
   .msg{padding:12px 14px;border-radius:10px;margin:10px 0;background:#f1f5f9}
   .ok{color:var(--ok);font-weight:600}
   .err{color:var(--err);font-weight:600}
+  .muted{color:var(--muted)}
   .footer{font-size:12px;color:#475569;margin-top:16px}
   input[type=text], input[type=number]{padding:10px;border:1px solid #e5e7eb;border-radius:8px;width:120px}
   .q{margin:10px 0}
+
+  /* Cinturón de seguridad: bloquea cualquier resto de WhatsApp/Ayuda */
+  a[href*="wa.me"], a[href*="api.whatsapp.com"],
+  #btn-whatsapp, [id*="whatsapp" i], [class*="whatsapp" i],
+  #btn-ayuda, [id*="ayuda" i], .ayuda { display: none !important; }
 </style>
 </head>
 <body>
 <header>
-  <h1>Entrenamiento de Matemática para ingresantes (Escuela N° 3117"La Reyes")Este flujo de trabajo ha sido creado con Inteligencia Artificial en base a la cartilla entregada en la unidad escolar </h1>
+  <h1>Entrenamiento de Matemática para ingresantes (Escuela N° 3117 “La Reyes”) — flujo creado con IA según la cartilla institucional</h1>
 </header>
 
 <main>
   <div class="card" id="bienvenida">
     <h2>¡Hola! Soy el Prof. MateSanda 👋</h2>
     <p>Te doy la bienvenida al entrenamiento interactivo. Elige un tema para empezar. En cualquier momento puedes volver al menú.</p>
+
+    <div class="chips" style="align-items:center;">
+      <span class="muted">Dificultad:</span>
+      <button id="dif_facil" class="btn toggle" onclick="setDificultad('facil')">Fácil</button>
+      <button id="dif_medio" class="btn toggle active" onclick="setDificultad('medio')">Medio</button>
+      <button id="dif_dificil" class="btn toggle" onclick="setDificultad('dificil')">Difícil</button>
+    </div>
+
     <div class="chips" id="menu"></div>
+
     <div class="chips" style="margin-top:10px">
-     
       <button class="btn ghost" onclick="miniQuiz()">Mini‑Quiz (5 preguntas)</button>
     </div>
   </div>
@@ -49,94 +65,191 @@
 </main>
 
 <script>
+// Dificultad global
+let dificultad = 'medio';
+function setDificultad(d){
+  dificultad = d;
+  ['facil','medio','dificil'].forEach(k=>{
+    const el = document.getElementById('dif_'+k);
+    if(el) el.classList.toggle('active', k===d);
+  });
+  const h3 = document.querySelector('#contenido h3');
+  if(h3){
+    const t = temas.find(x=>x.titulo===h3.textContent);
+    if(t) renderTema(t.id);
+  }
+}
+
+// Helpers
+function rint(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+function pickRange(easy, medium, hard){ return dificultad==='facil'?easy : (dificultad==='dificil'?hard:medium); }
+function gcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ [a,b]=[b,a%b]; } return a||1; }
+function simpFrac(num, den){ const g=gcd(num,den); return `${num/g}/${den/g}`; }
+function normList(v){ return v.split(/[,\s]+/).filter(x=>x).map(x=>x.replace(/\s/g,'')).join(',').replace(/,+$/,''); }
+function near(v, target, tol){ const x = parseFloat(String(v).replace(',', '.')); return isFinite(x) && Math.abs(x - target) <= tol; }
+
+// Temas con ejercicios generados según dificultad
 const temas = [
   {
     id:"naturales", titulo:"Números Naturales",
     exp:"Los números naturales sirven para contar: 1, 2, 3, … No incluyen decimales ni negativos. El 0 indica ausencia.",
     ejemplo:"Si tengo 5 cuadernos y compro 3 más: 5 + 3 = 8.",
-    preguntas:[
-      {enunciado:"¿Cuál es el siguiente de 49?", tipo:"num", resp:50, explic:"El siguiente es 49 + 1 = 50."},
-      {enunciado:"¿Cuánto es 27 + 15?", tipo:"num", resp:42, explic:"27 + 15 = 42."},
-      {enunciado:"Si tenía 30 caramelos y regalé 18, ¿cuántos quedan?", tipo:"num", resp:12, explic:"30 − 18 = 12."}
-    ]
+    preguntas: () => {
+      const [n1a,n1b] = pickRange([1,50],[1,99],[1,200]);
+      const [a1,b1]   = pickRange([5,30],[10,60],[30,120]);
+      const [c1a,c1b] = pickRange([20,40],[20,60],[40,120]);
+      const d1 = rint(5, Math.max(6, c1b-1));
+      const t1 = rint(n1a,n1b);
+      const a = rint(a1,b1), b = rint(a1,b1);
+      const c = rint(c1a,c1b), d = Math.min(c-1, d1);
+      return [
+        { enunciado:`¿Cuál es el siguiente de ${t1}?`, tipo:"num", resp:t1+1, explic:`El siguiente es ${t1} + 1 = ${t1+1}.` },
+        { enunciado:`¿Cuánto es ${a} + ${b}?`, tipo:"num", resp:a+b, explic:`${a} + ${b} = ${a+b}.` },
+        { enunciado:`Si tenía ${c} caramelos y regalé ${d}, ¿cuántos quedan?`, tipo:"num", resp:c-d, explic:`${c} − ${d} = ${c-d}.` },
+      ];
+    }
   },
   {
     id:"mult_div", titulo:"Múltiplos y Divisores",
     exp:"Un múltiplo de un número se obtiene al multiplicarlo por 1, 2, 3, …; un divisor 'cabe exacto' en otro.",
     ejemplo:"¿12 es múltiplo de 6? Sí, 6×2=12. ¿4 es divisor de 20? Sí, 20÷4=5.",
-    preguntas:[
-      {enunciado:"Elige los múltiplos de 5: 10, 12, 25, 28, 35 (responde con números separados por coma).", tipo:"texto",
-       resp:"10,25,35", valid:(v)=>normList(v)==="10,25,35", explic:"Múltiplos de 5: 10, 15, 20, 25, 30, 35…"},
-      {enunciado:"¿Es 7 divisor de 35? (si/no)", tipo:"texto", resp:"si", valid:(v)=>v.trim().toLowerCase()==="si",
-       explic:"35 ÷ 7 = 5, sin resto."},
-      {enunciado:"¿Cuál es el resto de 29 ÷ 4?", tipo:"num", resp:1, explic:"4×7=28, resta 1."}
-    ]
+    preguntas: () => {
+      const base = rint(...pickRange([2,6],[3,9],[4,12]));
+      const cand = Array.from({length:5}, ()=> rint(...pickRange([5,40],[5,70],[10,120])));
+      const mults = cand.filter(x=>x%base===0);
+      const nDiv = rint(...pickRange([2,8],[2,10],[3,15]));
+      const prod = nDiv*rint(...pickRange([2,8],[2,12],[3,16]));
+      const n1 = rint(...pickRange([15,30],[20,50],[40,120]));
+      const n2 = rint(...pickRange([2,7],[3,9],[5,12]));
+      return [
+        { enunciado:`Elige los múltiplos de ${base}: ${cand.join(', ')} (responde con números separados por coma)`, tipo:"texto",
+          resp:mults.join(','), valid:(v)=>normList(v)===mults.join(','), explic:`Múltiplos de ${base}: …` },
+        { enunciado:`¿Es ${nDiv} divisor de ${prod}? (si/no)`, tipo:"texto", resp:"si",
+          valid:(v)=>v.trim().toLowerCase()==="si", explic:`${prod} ÷ ${nDiv} = ${prod/nDiv}, sin resto.` },
+        { enunciado:`¿Cuál es el resto de ${n1} ÷ ${n2}?`, tipo:"num", resp:n1 % n2, explic:`${n2}×${Math.floor(n1/n2)}=${n1 - (n1%n2)}, resta ${n1%n2}.` }
+      ];
+    }
   },
   {
     id:"enteros", titulo:"Números Enteros",
     exp:"Incluyen negativos, cero y positivos: … −3, −2, −1, 0, 1, 2, 3, …",
     ejemplo:"−5 + 9 = 4.",
-    preguntas:[
-      {enunciado:"Completa: −3 + (−7) = ?", tipo:"texto", resp:"-10", valid:(v)=>v.replace(/\s/g,'')==='-10', explic:"Sumas negativos: −3 + −7 = −10."},
-      {enunciado:"8 − 12 = ?", tipo:"texto", resp:"-4", valid:(v)=>v.replace(/\s/g,'')==='-4', explic:"8 − 12 = −4."},
-      {enunciado:"Ordena de menor a mayor: −2, 3, −5, 0 (escribe así: -5,-2,0,3).", tipo:"texto",
-       resp:"-5,-2,0,3", valid:(v)=>normList(v)==="-5,-2,0,3",
-       explic:"En la recta: −5 < −2 < 0 < 3."}
-    ]
+    preguntas: () => {
+      const na = -rint(...pickRange([1,6],[1,9],[3,15]));
+      const nb = -rint(...pickRange([1,6],[1,9],[3,15]));
+      const c = rint(...pickRange([1,9],[1,12],[5,20]));
+      const d = rint(...pickRange([10,15],[13,25],[25,60]));
+      const set = [
+        -rint(...pickRange([1,5],[1,9],[2,12])),
+        rint(...pickRange([0,3],[0,5],[0,9])),
+        -rint(...pickRange([3,8],[6,12],[10,20])),
+        rint(...pickRange([3,8],[6,12],[10,20])),
+      ];
+      const sorted = [...set].sort((x,y)=>x-y).join(',');
+      return [
+        { enunciado:`Completa: ${na} + (${nb}) = ?`, tipo:"texto",
+          resp:String(na+nb), valid:(v)=>v.replace(/\s/g,'')===String(na+nb),
+          explic:`Sumas negativos: ${na} + ${nb} = ${na+nb}.` },
+        { enunciado:`${c} − ${d} = ?`, tipo:"texto",
+          resp:String(c-d), valid:(v)=>v.replace(/\s/g,'')===String(c-d),
+          explic:`${c} − ${d} = ${c-d}.` },
+        { enunciado:`Ordena de menor a mayor: ${set.join(', ')} (ej.: -5,-2,0,3)`, tipo:"texto",
+          resp:sorted, valid:(v)=>normList(v)===sorted, explic:`En la recta: ${sorted.replace(/,/g,' < ')}.` }
+      ];
+    }
   },
   {
     id:"fracciones", titulo:"Fracciones",
     exp:"a/b representa partes iguales de un todo (b≠0). Simplificar es dividir numerador y denominador por el mismo número.",
     ejemplo:"8/12 simplifica a 2/3 (dividiendo por 4).",
-    preguntas:[
-      {enunciado:"¿Cuál es mayor: 3/4 o 2/3? (responde 3/4 o 2/3)", tipo:"texto",
-       resp:"3/4", valid:(v)=>v.replace(/\s/g,'')==='3/4', explic:"3/4=0,75 y 2/3≈0,666…"},
-      {enunciado:"1/6 + 1/3 = ? (responde fracción simplificada)", tipo:"texto",
-       resp:"1/2", valid:(v)=>v.replace(/\s/g,'')==='1/2', explic:"m.c.m. 6 → 1/6 + 2/6 = 3/6 = 1/2."},
-      {enunciado:"Convierte 0,25 a fracción simplificada.", tipo:"texto",
-       resp:"1/4", valid:(v)=>v.replace(/\s/g,'')==='1/4', explic:"0,25 = 25/100 = 1/4."}
-    ]
+    preguntas: () => {
+      const denMax = pickRange([6],[9],[12])[0];
+      const f1 = [rint(1,5), rint(2,denMax)];
+      const f2 = [rint(1,5), rint(2,denMax)];
+      const v1 = f1[0]/f1[1], v2 = f2[0]/f2[1];
+      const mayor = v1>v2 ? `${f1[0]}/${f1[1]}` : `${f2[0]}/${f2[1]}`;
+      const a = rint(1,5), b = rint(1,5), c = rint(2,denMax), d = rint(2,denMax);
+      const mm = (c*d)/gcd(c,d);
+      const sNum = a*(mm/c) + b*(mm/d);
+      const simp = simpFrac(sNum, mm);
+      const decPoolEasy = [0.25,0.5,0.75], decPoolMed = [0.2,0.25,0.4,0.5,0.75], decPoolHard=[0.125,0.2,0.25,0.4,0.5,0.75];
+      const pool = dificultad==='facil'?decPoolEasy : dificultad==='dificil'?decPoolHard : decPoolMed;
+      const dec = pool[rint(0,pool.length-1)];
+      const mapDec = {0.125:'1/8',0.2:'1/5',0.25:'1/4',0.4:'2/5',0.5:'1/2',0.75:'3/4'};
+      const fracDec = mapDec[dec];
+      return [
+        { enunciado:`¿Cuál es mayor: ${f1[0]}/${f1[1]} o ${f2[0]}/${f2[1]}? (responde a/b)`, tipo:"texto",
+          resp:mayor, valid:(v)=>v.replace(/\s/g,'')===mayor, explic:`${mayor} es mayor.` },
+        { enunciado:`${a}/${c} + ${b}/${d} = ? (fracción simplificada)`, tipo:"texto",
+          resp:simp, valid:(v)=>v.replace(/\s/g,'')===simp,
+          explic:`m.c.m. ${c},${d} = ${mm} → suma ${sNum}/${mm} = ${simp}.` },
+        { enunciado:`Convierte ${String(dec).replace('.',',')} a fracción simplificada.`, tipo:"texto",
+          resp:fracDec, valid:(v)=>v.replace(/\s/g,'')===fracDec, explic:`${dec} = ${fracDec}.` }
+      ];
+    }
   },
   {
     id:"ecuaciones", titulo:"Ecuaciones (1er grado)",
     exp:"Resolver es dejar sola la incógnita aplicando operaciones inversas en ambos lados.",
     ejemplo:"x + 7 = 15 → x = 15 − 7 = 8.",
-    preguntas:[
-      {enunciado:"3x = 24 → x = ?", tipo:"num", resp:8, explic:"x = 24/3 = 8."},
-      {enunciado:"x − 9 = −2 → x = ?", tipo:"num", resp:7, explic:"x = −2 + 9 = 7."},
-      {enunciado:"2x + 4 = 18 → x = ?", tipo:"num", resp:7, explic:"2x = 14 → x = 7."}
-    ]
+    preguntas: () => {
+      const k = rint(...pickRange([2,6],[2,9],[3,12]));
+      const sol = rint(...pickRange([2,10],[2,12],[3,20]));
+      const cte = rint(...pickRange([-6,6],[-10,10],[-20,20]));
+      const rhs = k*sol + cte;
+      return [
+        { enunciado:`${k}x ${cte>=0?'+':''}${cte} = ${rhs}. ¿x = ?`, tipo:"num", resp:sol, explic:`${k}x = ${rhs} ${cte>=0?'-':''} ${Math.abs(cte)} → ${k}x = ${k*sol} → x = ${sol}.` },
+        { enunciado:`x − (${cte}) = ${rhs - k*sol} → x = ?`, tipo:"num", resp:cte + (rhs - k*sol), explic:`x = ${rhs - k*sol} + (${cte}) = ${cte + (rhs - k*sol)}.` },
+        { enunciado:`2x + ${cte} = ${2*sol + cte} → x = ?`, tipo:"num", resp:sol, explic:`2x = ${(2*sol+cte)} − ${cte} = ${2*sol} → x = ${sol}.` }
+      ];
+    }
   },
   {
     id:"proporcionalidad", titulo:"Proporcionalidad",
     exp:"Si al multiplicar una magnitud la otra se multiplica igual, son directamente proporcionales (regla de 3).",
     ejemplo:"3 cuadernos $1500 → unidad $500 → 5 cuadernos $2500.",
-    preguntas:[
-      {enunciado:"Si 4 kg cuestan $3600, 7 kg cuestan $…", tipo:"num", resp:6300, explic:"3600/4=900 por kg; 900×7=6300."},
-      {enunciado:"Tabla directa: x: 2→5; y: 10→ ? (proporcional)", tipo:"num", resp:25, explic:"Factor 2→5 es ×2,5; 10×2,5=25."},
-      {enunciado:"Escala 1 cm → 5 km. ¿Cuántos km son 7 cm?", tipo:"num", resp:35, explic:"7×5=35 km."}
-    ]
+    preguntas: () => {
+      const kg1 = rint(...pickRange([2,4],[2,6],[3,8]));
+      const precio = rint(...pickRange([300,800],[400,1200],[700,2000]))*kg1;
+      const kg2 = rint(...pickRange([3,6],[5,10],[8,15]));
+      const x1 = rint(...pickRange([2,4],[2,5],[3,6]));
+      const x2 = rint(...pickRange([5,8],[6,12],[10,18]));
+      const y1 = rint(...pickRange([8,15],[8,20],[15,40]));
+      const y2 = Math.round(y1*(x2/x1));
+      const escala = rint(...pickRange([2,4],[3,8],[5,12]));
+      const cm = rint(...pickRange([2,6],[3,10],[6,15]));
+      return [
+        { enunciado:`Si ${kg1} kg cuestan $${precio}, ${kg2} kg cuestan $…`, tipo:"num",
+          resp:(precio/kg1)*kg2, explic:`$${precio}/${kg1}=${(precio/kg1)} por kg; ×${kg2} = ${(precio/kg1)*kg2}.` },
+        { enunciado:`Tabla directa: x: ${x1}→${x2}; y: ${y1}→ ?`, tipo:"num",
+          resp:y2, explic:`Factor ${x1}→${x2} es ×${(x2/x1).toFixed(2)}; ${y1}×${(x2/x1).toFixed(2)}≈${y2}.` },
+        { enunciado:`Escala 1 cm → ${escala} km. ¿Cuántos km son ${cm} cm?`, tipo:"num",
+          resp:escala*cm, explic:`${cm}×${escala}=${escala*cm} km.` }
+      ];
+    }
   },
   {
-    id:"geometria", titulo:"Geometría (plana)",
+    id:"geometria", titulo:"Geometría (planas)",
     exp:"Perímetro: suma de lados. Áreas: Rectángulo A= b×h; Triángulo A=(b×h)/2; Círculo A=πr², P=2πr.",
     ejemplo:"Rectángulo 8×5 → A=40 cm²; P=26 cm.",
-    preguntas:[
-      {enunciado:"Triángulo b=10, h=6. Área = ?", tipo:"num", resp:30, explic:"(10×6)/2 = 30 cm²."},
-      {enunciado:"Círculo r=3, usa π≈3,14. Área ≈ ?", tipo:"texto", resp:"28.26", valid:(v)=>near(v,28.26,0.2),
-       explic:"πr² ≈ 3,14×9 = 28,26."},
-      {enunciado:"Cuadrado lado 7. Perímetro = ?", tipo:"num", resp:28, explic:"4×7 = 28 cm."}
-    ]
+    preguntas: () => {
+      const b = rint(...pickRange([6,10],[6,14],[8,20]));
+      const h = rint(...pickRange([4,8],[4,10],[6,16]));
+      const r = rint(...pickRange([2,4],[2,6],[3,8]));
+      const areaC = +(Math.PI*r*r).toFixed(2);
+      const lado = rint(...pickRange([4,8],[5,12],[8,20]));
+      return [
+        { enunciado:`Triángulo b=${b}, h=${h}. Área = ?`, tipo:"num", resp:(b*h)/2, explic:`(${b}×${h})/2 = ${(b*h)/2} cm².` },
+        { enunciado:`Círculo r=${r}, usa π≈3,14. Área ≈ ?`, tipo:"texto",
+          resp:String(areaC), valid:(v)=>near(v, areaC, 0.2),
+          explic:`πr² ≈ 3,14×${r*r} ≈ ${areaC}.` },
+        { enunciado:`Cuadrado lado ${lado}. Perímetro = ?`, tipo:"num", resp:4*lado, explic:`4×${lado} = ${4*lado} cm.` }
+      ];
+    }
   }
 ];
 
-function normList(v){
-  return v.split(/[,\s]+/).filter(x=>x).map(x=>x.replace(/\s/g,'')).join(',').replace(/,+$/,'');
-}
-function near(v, target, tol){
-  const x = parseFloat(String(v).replace(',', '.'));
-  return isFinite(x) && Math.abs(x - target) <= tol;
-}
+// UI y flujo
 function renderMenu(){
   const m = document.getElementById('menu');
   m.innerHTML = '';
@@ -150,6 +263,7 @@ function renderMenu(){
 }
 function renderTema(id){
   const t = temas.find(x=>x.id===id);
+  const pregs = typeof t.preguntas === 'function' ? t.preguntas() : t.preguntas;
   const c = document.getElementById('contenido');
   c.innerHTML = `
     <div class="card">
@@ -164,7 +278,7 @@ function renderTema(id){
       </div>
     </div>
   `;
-  renderPreguntas(t.preguntas);
+  renderPreguntas(pregs);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function renderPreguntas(pregs){
@@ -208,42 +322,75 @@ function volverMenu(){
   document.getElementById('contenido').innerHTML='';
   window.scrollTo({top:0,behavior:'smooth'});
 }
-function ayuda(){
-  const c = document.getElementById('contenido');
-  c.innerHTML = `
-    <div class="card">
-      <h3>Ayuda</h3>
-      <div class="msg">Escribe solo números cuando se pida. En fracciones usa a/b. Pulsa “Volver al Menú” para cambiar de tema.</div>
-      <div class="chips">
-        <a class="btn ghost" target="_blank" href="https://wa.me/543874122849?text=Hola+necesito+ayuda">Hablar con docente</a>
-        <button class="btn primary" onclick="volverMenu()">Volver al Menú</button>
-      </div>
-    </div>`;
-  window.scrollTo({top:0,behavior:'smooth'});
-}
+
+// Mini‑Quiz dinámico con dificultad
 function miniQuiz(){
-  const preguntas = [
-    {e:"Suma: −4 + 9 = ?", tipo:"num", r:5, x:"−4 + 9 = 5."},
-    {e:"Múltiplos de 6 hasta 24 (escribe: 6,12,18,24).", tipo:"texto", r:"6,12,18,24", v:(v)=>normList(v)==="6,12,18,24", x:"6,12,18,24."},
-    {e:"2/5 + 1/10 = ? (fracción simplificada)", tipo:"texto", r:"1/2", v:(v)=>v.replace(/\s/g,'')==='1/2', x:"4/10+1/10=5/10=1/2."},
-    {e:"x en 5x − 10 = 15", tipo:"num", r:5, x:"5x=25 → x=5."},
-    {e:"Área de rectángulo 9×4", tipo:"num", r:36, x:"9×4=36."}
-  ];
+  const rA = pickRange([1,6],[1,9],[3,15]);
+  const rB = pickRange([3,9],[3,12],[8,20]);
+  const a1 = -rint(...rA), b1 = rint(...rB);
+  const q1 = { e:`Suma: ${a1} + ${b1} = ?`, tipo:"num", r:a1 + b1, x:`${a1} + ${b1} = ${a1+b1}.` };
+
+  const rM = pickRange([2,6],[3,9],[4,12]);
+  const rN = pickRange([3,4],[3,6],[4,7]);
+  const m = rint(...rM), nmax = rint(...rN);
+  const lista = Array.from({length:nmax}, (_,i)=> m*(i+1));
+  const q2 = {
+    e:`Múltiplos de ${m} hasta ${m*nmax} (escribe: ${lista.join(',')}).`,
+    tipo:"texto",
+    r:lista.join(','),
+    v:(v)=>normList(v)===lista.join(','),
+    x:`${lista.join(',')}.`
+  };
+
+  const denMax = dificultad==='facil'?8 : dificultad==='dificil'?14 : 10;
+  const a = rint(1,4), c = rint(2,denMax);
+  const b = rint(1,4), d = rint(2,denMax);
+  const mm = (c*d)/gcd(c,d);
+  const sNum = a*(mm/c) + b*(mm/d);
+  const resp = simpFrac(sNum, mm);
+  const q3 = {
+    e:`${a}/${c} + ${b}/${d} = ? (fracción simplificada)`,
+    tipo:"texto",
+    r:resp,
+    v:(v)=>v.replace(/\s/g,'')===resp,
+    x:`m.c.m.(${c},${d})=${mm} → suma ${sNum}/${mm} = ${resp}.`
+  };
+
+  const k = rint(...pickRange([2,6],[2,7],[3,10]));
+  const sol = rint(...pickRange([2,10],[2,12],[3,20]));
+  const cte = rint(...pickRange([-8,8],[-10,10],[-20,20]));
+  const rhs = k*sol + cte;
+  const q4 = { e:`${k}x ${cte>=0?'+':''}${cte} = ${rhs}. ¿x = ?`, tipo:"num", r:sol, x:`${k}x = ${rhs} ${cte>=0?'-':''} ${Math.abs(cte)} → ${k}x = ${k*sol} → x = ${sol}.` };
+
+  const b2 = rint(...pickRange([4,9],[5,12],[8,16]));
+  const h2 = rint(...pickRange([3,8],[3,10],[6,14]));
+  const q5 = { e:`Área de rectángulo ${b2}×${h2}`, tipo:"num", r:b2*h2, x:`${b2}×${h2} = ${b2*h2}.` };
+
+  const preguntas = [q1, q2, q3, q4, q5];
+
   let aciertos=0;
   const c = document.getElementById('contenido');
-  c.innerHTML = `<div class="card"><h3>Mini‑Quiz (5)</h3><div id="quiz"></div></div>`;
+  c.innerHTML = `<div class="card"><h3>Mini‑Quiz (5)</h3>
+    <div class="muted">Dificultad actual: <b>${dificultad.toUpperCase()}</b></div>
+    <div id="quiz"></div></div>`;
   const qz = document.getElementById('quiz');
+
   preguntas.forEach((q,i)=>{
     const inp = q.tipo==='num'?`<input type="number" id="mq_${i}">`:`<input type="text" id="mq_${i}">`;
     const div = document.createElement('div');
     div.className='q';
-    div.innerHTML = `<div>${i+1}) ${q.e}</div><div>${inp} <button class="btn" onclick="mqCheck(${i})">Comprobar</button></div><div id="mqfb_${i}"></div>`;
+    div.innerHTML = `<div>${i+1}) ${q.e}</div>
+      <div>${inp} <button class="btn" onclick="mqCheck(${i})">Comprobar</button></div>
+      <div id="mqfb_${i}"></div>`;
     qz.appendChild(div);
   });
+
   window.mq = {preguntas, aciertos};
   const fin = document.createElement('div');
   fin.style.marginTop='10px';
-  fin.innerHTML = `<button class="btn primary" onclick="mqFin()">Finalizar quiz</button> <button class="btn" onclick="volverMenu()">Volver al Menú</button>`;
+  fin.innerHTML = `<button class="btn primary" onclick="mqFin()">Finalizar quiz</button>
+                   <button class="btn" onclick="miniQuiz()">Repetir (nuevas)</button>
+                   <button class="btn" onclick="volverMenu()">Volver al Menú</button>`;
   qz.appendChild(fin);
 }
 function mqCheck(i){
@@ -259,8 +406,18 @@ function mqCheck(i){
 function mqFin(){
   const n = window.mq.aciertos;
   const c = document.getElementById('contenido');
-  c.innerHTML = `<div class="card"><h3>Resultado</h3><div class="msg">Tu puntaje: <b>${n}/5</b>.</div><p>${n>=4?'¡Excelente! Sigue así.':'¡Buen intento! Puedes repasar y volver a intentarlo.'}</p><div class="chips"><button class="btn" onclick="miniQuiz()">Repetir quiz</button><button class="btn primary" onclick="volverMenu()">Volver al Menú</button></div></div>`;
+  c.innerHTML = `<div class="card">
+    <h3>Resultado</h3>
+    <div class="msg">Tu puntaje: <b>${n}/5</b>. Dificultad: <b>${dificultad}</b></div>
+    <p>${n>=4?'¡Excelente! Sigue así.':'¡Buen intento! Puedes repasar y volver a intentarlo.'}</p>
+    <div class="chips">
+      <button class="btn" onclick="miniQuiz()">Repetir quiz</button>
+      <button class="btn primary" onclick="volverMenu()">Volver al Menú</button>
+    </div>
+  </div>`;
 }
+
+// Inicializa
 renderMenu();
 </script>
 </body>
