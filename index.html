@@ -29,6 +29,15 @@
   #btn-ayuda, [id*="ayuda" i], .ayuda { display: none !important; }
 </style>
 </head>
+  <script>
+  // Contador de visitas con CountAPI
+  fetch('https://api.countapi.xyz/hit/victorsoria800-cmd.github.io/matesanda')
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('contador').textContent =
+        `Visitas al sitio: ${data.value}`;
+    });
+</script>
 <body>
 <header>
   <h1>Entrenamiento de Matemática para ingresantes (Escuela N° 3117 “La Reyes”) — Flujo creado con IA según la cartilla institucional</h1>
@@ -409,7 +418,5 @@ setTimeout(()=>{ try{
 </script>
 </body>
 </html>
-<div class="footer">
-  Consejos: responde solo con números cuando se pida. Si te equivocas, verás la corrección al instante.<br>
-  <span id="contador"></span>
-</div>
+
+  
